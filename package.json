@@ -1,0 +1,33 @@
+{
+  "name": "@pheasantplucker/redis",
+  "version": "0.0.4",
+  "description": "A failables wrapper around Redis",
+  "main": "src/redis.js",
+  "scripts": {
+    "test": "mocha ./src/*.test.js",
+    "lint": "esw .eslintrc.js src/ lib/ tests/ -w --fix --ignore-pattern !.eslintrc.js",
+    "deploy": "./deploy.sh",
+    "main": "./src/redis.js"
+  },
+  "keywords": [
+    "redis",
+    "failables"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pheasantplucker/redis.git"
+  },
+  "author": "chrisglick@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-plugin-jest": "^21.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-watch": "^3.1.3",
+    "prettier": "^1.7.4"
+  },
+  "dependencies": {
+    "@pheasantplucker/failables": "^2.0.3",
+    "mocha": "^5.1.1",
+  }
+}

@@ -16,6 +16,8 @@ const {
   hashGetAll,
   hashRemove,
   hashExists,
+  pipeline,
+  batch_get,
 } = require('./redis.js')
 
 const { REDIS_HOST } = process.env
@@ -138,6 +140,48 @@ describe(`redis.js()`, () => {
       assertSuccess(r2)
       const existsPay = payload(r2)
       equal(existsPay, 0)
+    })
+  })
+
+  describe(`pipeline`, () => {
+    it('send a set of command through the pipeline', async () => {
+      const commands = [
+        ['set', 'foo_pipeline', '1'],
+        ['get', 'foo_pipeline'],
+        ['get', 'foo_pipeline_null'],
+      ]
+      const result = await pipeline(commands)
+      assertSuccess(result)
+      equal(payload(result), [[null, 'OK'], [null, '1'], [null, null]])
+    })
+    it('send the deletes', async () => {
+      const commands = [['del', 'foo_pipeline']]
+      const result = await pipeline(commands)
+      assertSuccess(result)
+      equal(payload(result), [[null, 1]])
+    })
+  })
+
+  describe(`batch_get`, () => {
+    it('make some data', async () => {
+      const commands = [
+        ['set', 'bg1', '1'],
+        ['set', 'bg2', '2'],
+        ['set', 'bg3', '3'],
+      ]
+      const result = await pipeline(commands)
+      assertSuccess(result)
+    })
+    it('get the data as a map', async () => {
+      const keys = ['bg1', 'bg2', 'bg3']
+      const result = await batch_get(keys)
+      assertSuccess(result)
+      equal(payload(result), { bg1: '1', bg2: '2', bg3: '3' })
+    })
+    it('delete the data', async () => {
+      const commands = [['del', 'bg1'], ['del', 'bg2'], ['del', 'bg3']]
+      const result = await pipeline(commands)
+      assertSuccess(result)
     })
   })
 

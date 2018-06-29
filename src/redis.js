@@ -103,6 +103,31 @@ async function hashExists(key, ...args) {
   }
 }
 
+async function pipeline(commands) {
+  try {
+    const p = redisClient.pipeline(commands)
+    const r1 = await p.exec()
+    return success(r1)
+  } catch (error) {
+    return failure(error.toString())
+  }
+}
+
+async function batch_get(keys) {
+  try {
+    const commands = keys.map(k => ['get', k])
+    const p = redisClient.pipeline(commands)
+    const data = await p.exec()
+    const the_map = {}
+    for (let i = 0; i < data.length; i++) {
+      the_map[keys[i]] = data[i][1]
+    }
+    return success(the_map)
+  } catch (error) {
+    return failure(error.toString())
+  }
+}
+
 function test() {
   return success()
 }
@@ -120,4 +145,6 @@ module.exports = {
   hashGetAll,
   hashRemove,
   hashExists,
+  pipeline,
+  batch_get,
 }

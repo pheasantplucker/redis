@@ -3,8 +3,9 @@ const Redis = require('ioredis')
 
 let redisClient
 
-async function createClient(opts) {
+async function createClient(opts, force_reconnect = false) {
   try {
+    if (redisClient && force_reconnect === false) return success(redisClient)
     const client = new Redis(opts)
     redisClient = client
     return success(client)
